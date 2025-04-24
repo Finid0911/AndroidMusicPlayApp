@@ -1,4 +1,4 @@
-package com.example.musicplayapp.ui.theme
+package com.example.musicplayapp.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
