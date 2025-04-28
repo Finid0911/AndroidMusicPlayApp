@@ -49,12 +49,13 @@ fun SongItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(110.dp)
+            .background(Color.White)
             .clickable { onClickSong(song.songId) }
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .weight(0.3f)
+                .weight(0.25f)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.enhypen_xo),
@@ -86,7 +87,7 @@ fun SongItem(
         }
 
         Column(
-            modifier = Modifier.weight(0.55f)
+            modifier = Modifier.weight(0.6f)
         ) {
             CommonText(textContent = song.songTitle)
             CommonText(textContent = song.artist.uppercase())
