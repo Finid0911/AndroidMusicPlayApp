@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,68 +44,82 @@ import com.example.musicplayapp.presentation.ui.theme.MusicPlayAppTheme
 @Composable
 fun SongItem(
     song: Song,
-    onClickSong: (songId: Int) -> Unit,
-    onMoreOption: (songId: Int) -> Unit,
-    isSongPlayed: Boolean
+    onClickSong: (song: Song) -> Unit,
+    onMoreOption: (songId: Long) -> Unit
 ) {
-    Row(
-        horizontalArrangement = Arrangement.Absolute.Left,
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(110.dp)
+            .wrapContentHeight()
             .background(Color.White)
-            .clickable { onClickSong(song.songId) }
+            .clickable { onClickSong(song) }
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .weight(0.25f)
+        Row(
+            horizontalArrangement = Arrangement.Absolute.Left,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.enhypen_xo),
-                contentDescription = "XO-Enhypen",
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .padding(12.dp)
-                    .clip(RoundedCornerShape(18.dp))
-                    .aspectRatio(1f),
-            )
-            if (isSongPlayed) {
-                Box(
-                    contentAlignment = Alignment.Center,
+                    .weight(0.2f)
+            ) {
+                Image(
+                    painter = if (song.thumbnail != null) {
+                        BitmapPainter(song.thumbnail.asImageBitmap())
+                    } else {
+                        painterResource(id = R.drawable.enhypen_xo)
+                    },
+                    contentDescription = song.songTitle,
                     modifier = Modifier
+                        .size(80.dp)
                         .padding(12.dp)
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(18.dp))
-                        .aspectRatio(1f)
-                        .background(Color.Gray.copy(alpha = 0.5f))
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Play Song icon",
+                        .clip(RoundedCornerShape(14.dp)),
+                )
+                if (song.isSongPlayed) {
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .size(32.dp)
-                            .alpha(0.8f)
-                    )
+                            .padding(12.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .aspectRatio(1f)
+                            .background(Color.Gray.copy(alpha = 0.5f))
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Play Song icon",
+                            modifier = Modifier
+                                .size(30.dp)
+                                .alpha(0.8f)
+                        )
+                    }
                 }
             }
+
+            Column(
+                modifier = Modifier
+                    .weight(0.65f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                CommonText(textContent = song.songTitle)
+                CommonText(textContent = song.artist.uppercase(), color = Color.Gray)
+            }
+
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = null,
+                modifier = Modifier
+                    .weight(0.15f)
+                    .clickable { onMoreOption(song.songId) }
+            )
         }
 
-        Column(
-            modifier = Modifier.weight(0.6f)
-        ) {
-            CommonText(textContent = song.songTitle)
-            CommonText(textContent = song.artist.uppercase())
-        }
-
-        Icon(
-            imageVector = Icons.Default.MoreVert,
-            contentDescription = null,
+        Divider(
+            color = Color.LightGray,
+            thickness = 1.dp,
             modifier = Modifier
-                .weight(0.15f)
-                .clickable { onMoreOption(song.songId) }
+                .fillMaxWidth(0.8f)
+                .align(Alignment.End)
         )
-
     }
 }
 
@@ -108,11 +127,15 @@ fun SongItem(
 @Composable
 fun GreetingPreview() {
     val song =
-        Song(songId = 0, songTitle = "XO (Only if you say yes)", thumbnail = "", artist = "Enhypen")
+        Song(
+            songId = 0,
+            songTitle = "XO (Only if you say yes)",
+            thumbnail = null,
+            artist = "Enhypen"
+        )
     SongItem(
         song = song,
         onClickSong = {},
-        onMoreOption = {},
-        isSongPlayed = false
+        onMoreOption = {}
     )
 }
